@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--命名空间：对应DAO接口的全路径-->
+<mapper namespace="com.qianfeng.dao.PatientDao">
+    <!--*****************全国范围***********-->
+    <!--    现有确诊-->
+    <select id="queryCount" resultType="com.qianfeng.pojo.ResNum">
+        select count(id) as countnum from patient where patient_state=2 or patient_state=3
+    </select>
+
+    <!--现有无症状-->
+    <select id="queryCount2" resultType="com.qianfeng.pojo.ResNum">
+        select count(*) as countnum from patient where patient_state=3
+    </select>
+
+    <!--现有本土-->
+    <select id="queryCount3" resultType="com.qianfeng.pojo.ResNum">
+        select count(*) as countnum from patient where country_num=1 and(patient_state=2 or patient_state=3)
+    </select>
+
+    <!--现有境外-->
+    <select id="queryCount4" resultType="com.qianfeng.pojo.ResNum">
+        select count(*) as countnum from patient where country_num=2 and (patient_state=2 or patient_state=3)
+    </select>
+
+    <!--    累计确诊-->
+    <select id="queryCount5" resultType="com.qianfeng.pojo.ResNum">
+        select count(id) as countnum from patient
+    </select>
+    <!--    累计境外-->
+    <select id="queryCount6" resultType="com.qianfeng.pojo.ResNum">
+        select count(*) as countnum from patient where country_num=2
+    </select>
+    <!--    累计治愈-->
+    <select id="queryCount7" resultType="com.qianfeng.pojo.ResNum">
+        select count(*) as countnum from patient where patient_state=1
+    </select>
+    <!--    累计死亡-->
+    <select id="queryCount8" resultType="com.qianfeng.pojo.ResNum">
+        select count(*) as countnum from patient where patient_state=4
+    </select>
+
+<!--获取地图信息-->
+    <select id="queryMapResNow" resultType="com.qianfeng.pojo.MapValue">
+        select count(id) as value,province as name from patient
+        where patient_state=2 or patient_state=3
+        GROUP BY province
+    </select>
+    <!--    地图数据累计确诊-->
+    <select id="queryMapResALL" resultType="com.qianfeng.pojo.MapValue">
+        select count(id) as value,province as name from patient
+        GROUP BY province
+    </select>
+
+    <!--    获取柱状图信息-->
+    <select id="queryHistogramRes" resultType="com.qianfeng.pojo.HistogramValue">
+        Select count(id) as value ,province as name from patient group by province
+    </select>
+
+<!--    安徽省-->
+
+    <!--    现有确诊-->
+    <select id="queryCount9" resultType="com.qianfeng.pojo.ResNum">
+        select count(id) as countnum from patient where province='安徽省' and(patient_state=2 or patient_state=3)
+    </select>
+
+    <!--现有本土-->
+    <select id="queryCount10" resultType="com.qianfeng.pojo.ResNum">
+        select count(*) as countnum from patient where province='安徽省' and country_num=1 and(patient_state=2 or patient_state=3)
+    </select>
+    <!--现有境外-->
+    <select id="queryCount11" resultType="com.qianfeng.pojo.ResNum">
+        select count(*) as countnum from patient where province='安徽省' and country_num=2 and (patient_state=2 or patient_state=3)
+    </select>
+    <!--现有无症状-->
+    <select id="queryCount12" resultType="com.qianfeng.pojo.ResNum">
+        select count(*) as countnum from patient where province='安徽省' and patient_state=3
+    </select>
+
+
+    <!--    累计确诊-->
+    <select id="queryCount13" resultType="com.qianfeng.pojo.ResNum">
+        select count(id) as countnum from patient where province='安徽省'
+    </select>
+    <!--    累计境外-->
+    <select id="queryCount14" resultType="com.qianfeng.pojo.ResNum">
+        select count(*) as countnum from patient where  province='安徽省' and country_num=2
+    </select>
+    <!--    累计治愈-->
+    <select id="queryCount15" resultType="com.qianfeng.pojo.ResNum">
+        select count(*) as countnum from patient where  province='安徽省' and patient_state=1
+    </select>
+    <!--    累计死亡-->
+    <select id="queryCount16" resultType="com.qianfeng.pojo.ResNum">
+        select count(*) as countnum from patient where  province='安徽省' and patient_state=4
+    </select>
+
+<!--    CURD-->
+<select id="queryPatientsAll" resultType="com.qianfeng.pojo.patient">
+    select id,country,province,patient_name,create_datetime from patient
+</select>
+
+    <insert id="insertPatient" parameterType="com.qianfeng.pojo.patient">
+        INSERT INTO yiqing.patient (id, country, country_num, province, patient_name, patient_type, patient_state,
+                                    create_datetime, suretime, hardtime, curetime, dietime)
+        VALUES (#{id}, #{country}, #{country_num}, #{province}, #{patient_name}, #{patient_type}, #{patient_state}, NOW(), null, null, null, null)
+    </insert>
+
+    <delete id="deletePatientByid" parameterType="int">
+        DELETE
+        FROM yiqing.patient
+        WHERE id = #{id};
+    </delete>
+</mapper>
